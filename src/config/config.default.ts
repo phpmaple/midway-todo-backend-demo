@@ -1,6 +1,6 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 import { join } from 'path';
-
+import { EntityNotFoundError } from 'typeorm';
 export type DefaultConfig = PowerPartial<EggAppConfig>;
 
 export default (appInfo: EggAppInfo) => {
@@ -25,6 +25,18 @@ export default (appInfo: EggAppInfo) => {
     logging: true,
   };
 
+  config.onerror = {
+    all(err, ctx) {
+      if (err instanceof EntityNotFoundError) {
+        ctx.status = 404;
+      } else if (err.name === 'ValidationError') {
+        ctx.status = 400;
+      } else {
+        ctx.status = 500;
+      }
+      ctx.body = err.message;
+    },
+  };
   // config.security = {
   //   csrf: false,
   // };

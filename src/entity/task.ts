@@ -20,10 +20,10 @@ export class Task {
   })
   completed: boolean;
 
-  @Column()
+  @Column({ default: 1, nullable: false })
   priority: number; // Task priority from 1 (normal, default value) to 4 (urgent).
 
-  @Column()
+  @Column({ default: 1, nullable: false })
   order: number; // Position under the same parent
 
   @CreateDateColumn({

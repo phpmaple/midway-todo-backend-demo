@@ -10,10 +10,13 @@ import {
   Patch,
   Post,
   Provide,
+  Validate,
 } from '@midwayjs/decorator';
 import { Context } from 'egg';
+import { TaskDTO } from '../dto';
 import { Task } from '../entity/task';
 import { TaskService } from '../service/task';
+
 @Provide()
 @Controller('/api/tasks')
 export class APIController {
@@ -25,13 +28,16 @@ export class APIController {
 
   @Get('/')
   async getTasks(): Promise<Task[]> {
-    const tasks = await this.taskService.getActiveTasks();
+    const tasks = await this.taskService.getTasks();
     return tasks;
   }
 
   @Post('/')
+  @Validate()
   @HttpCode(201)
-  async addTask(@Body(ALL) task: Task): Promise<Task> {
+  async addTask(@Body(ALL) taskdto: TaskDTO): Promise<Task> {
+    const task = new Task();
+    task.content = taskdto.content;
     const taskResult = await this.taskService.addTask(task);
     return taskResult;
   }
@@ -44,11 +50,12 @@ export class APIController {
   }
 
   @Patch('/:id')
+  @Validate()
   async updateTask(
     @Param() id: number,
-    @Body() content: string
+    @Body(ALL) taskdto: TaskDTO
   ): Promise<Task> {
-    const taskResult = await this.taskService.updateTask(id, content);
+    const taskResult = await this.taskService.updateTask(id, taskdto.content);
     return taskResult;
   }
 

@@ -8,7 +8,7 @@ export class TaskService {
   @InjectEntityModel(Task)
   taskModel: Repository<Task>;
 
-  async getActiveTasks() {
+  async getTasks() {
     const tasks = await this.taskModel.find();
     return tasks;
   }
@@ -19,24 +19,24 @@ export class TaskService {
   }
 
   async deleteTask(id: number) {
-    const taskToRemove = await this.taskModel.findOne(id);
+    const taskToRemove = await this.taskModel.findOneOrFail(id);
     return await this.taskModel.remove(taskToRemove);
   }
 
   async updateTask(id: number, content: string) {
-    const taskToUpdate = await this.taskModel.findOne(id);
+    const taskToUpdate = await this.taskModel.findOneOrFail(id);
     taskToUpdate.content = content;
     return await this.taskModel.save(taskToUpdate);
   }
 
   async closeTask(id: number) {
-    const taskToClose = await this.taskModel.findOne(id);
+    const taskToClose = await this.taskModel.findOneOrFail(id);
     taskToClose.completed = true;
     return await this.taskModel.save(taskToClose);
   }
 
   async reopenTask(id: number) {
-    const taskToOpen = await this.taskModel.findOne(id);
+    const taskToOpen = await this.taskModel.findOneOrFail(id);
     taskToOpen.completed = false;
     return await this.taskModel.save(taskToOpen);
   }
