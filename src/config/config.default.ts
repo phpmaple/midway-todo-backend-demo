@@ -1,4 +1,5 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { join } from 'path';
 
 export type DefaultConfig = PowerPartial<EggAppConfig>;
 
@@ -15,6 +16,13 @@ export default (appInfo: EggAppInfo) => {
     // true 代表使用 midway logger
     // false 或者为空代表使用 egg-logger
     replaceEggLogger: true,
+  };
+
+  config.orm = {
+    type: 'sqlite',
+    database: join(__dirname, '../../test.sqlite'),
+    synchronize: true, // 如果第一次使用，不存在表，有同步的需求可以写 true
+    logging: true,
   };
 
   // config.security = {
